@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Table from "../components/Table";
+
+const API_URL = "https://67eca027aa794fb3222e43e2.mockapi.io/members";
 
 export default function Home() {
   const [sector, setSector] = useState("default"); // 'default' | 'user' | 'admin'
@@ -9,6 +11,29 @@ export default function Home() {
     lastname: "",
     position: "",
   });
+  const [loading, setLoading] = useState(false);
+
+  // 1. GET: Fetch all members from API
+  const fetchMembers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(API_URL);
+      if (!response.ok) {
+        throw new Error("Failed to fetch members");
+      }
+      const data = await response.json();
+      setMembers(data);
+    } catch (error) {
+      console.error("Error fetching members:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Run fetch on initial component mount
+  useEffect(() => {
+    fetchMembers();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -18,28 +43,52 @@ export default function Home() {
     }));
   };
 
-  const handleSave = (e) => {
+  // 2. POST: Create a new member via API
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.lastname.trim() || !formData.position.trim()) {
       return;
     }
 
-    const newMember = {
-      id: Date.now(),
-      name: formData.name.trim(),
-      lastname: formData.lastname.trim(),
-      position: formData.position.trim(),
-    };
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          lastname: formData.lastname.trim(),
+          position: formData.position.trim(),
+        }),
+      });
 
-    setMembers((prev) => [...prev, newMember]);
-    setFormData({ name: "", lastname: "", position: "" });
+      if (response.ok) {
+        const createdMember = await response.json();
+        setMembers((prev) => [...prev, createdMember]);
+        setFormData({ name: "", lastname: "", position: "" });
+      }
+    } catch (error) {
+      console.error("Error saving member:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    setMembers((prev) => prev.filter((m) => m.id !== id));
+  // 3. DELETE: Remove a member via API
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setMembers((prev) => prev.filter((m) => m.id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting member:", error);
+    }
   };
 
-  // Determine Title based on current Sector
+  // Determine dynamic subtitle based on current Sector
   const getSubTitle = () => {
     if (sector === "user") return "Home - User Section";
     if (sector === "admin") return "Home - Admin Section";
