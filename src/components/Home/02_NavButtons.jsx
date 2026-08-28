@@ -1,39 +1,25 @@
 export default function NavButtons({ sector, setSector }) {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-4">
+    <div className="flex flex-wrap items-center justify-center gap-14 mb-16">
       <button
         type="button"
         onClick={() => setSector("user")}
-        className={`cursor-pointer px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 shadow-sm active:scale-95 ${
-          sector === "user"
-            ? "bg-slate-900 text-white ring-2 ring-slate-900 ring-offset-2"
-            : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-300"
+        className={`cursor-pointer bg-white text-black font-bold text-sm px-6 py-3.5 rounded shadow-[0_2px_6px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:scale-95 transition-all ${
+          sector === "user" ? "ring-2 ring-black" : ""
         }`}
       >
-        User Home Sector
+        User Home Section
       </button>
 
       <button
         type="button"
         onClick={() => setSector("admin")}
-        className={`cursor-pointer px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 shadow-sm active:scale-95 ${
-          sector === "admin"
-            ? "bg-amber-500 text-slate-950 ring-2 ring-amber-500 ring-offset-2 font-extrabold"
-            : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-300"
+        className={`cursor-pointer bg-white text-black font-bold text-sm px-6 py-3.5 rounded shadow-[0_2px_6px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:scale-95 transition-all ${
+          sector === "admin" ? "ring-2 ring-black" : ""
         }`}
       >
-        Admin Home Sector
+        Admin Home Section
       </button>
-
-      {sector !== "default" && (
-        <button
-          type="button"
-          onClick={() => setSector("default")}
-          className="cursor-pointer text-xs font-semibold text-slate-500 hover:text-slate-800 underline px-2 py-1"
-        >
-          Reset View
-        </button>
-      )}
     </div>
   );
 }

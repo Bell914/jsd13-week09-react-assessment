@@ -3,7 +3,7 @@ export default function Owner() {
     <div className="flex flex-col items-center justify-center pt-12 pb-20 px-4 max-w-4xl mx-auto text-center">
       {/* Name / Group Header */}
       <h1 className="text-3xl sm:text-4xl font-extrabold text-black tracking-tight mb-8">
-        13 Ittikorn. Tipson(บีเอ็ม) - JSD13
+        13 Ittikorn Tipson(บีเอ็ม) - JSD13
       </h1>
 
       {/* Picture Wireframe Box with 'X' and 'picture' label */}
