@@ -1,33 +1,135 @@
+import { useState } from "react";
+import Table from "../components/Table";
+
 export default function Home() {
+  const [sector, setSector] = useState("default"); // 'default' | 'user' | 'admin'
+  const [members, setMembers] = useState([]);
+  const [formData, setFormData] = useState({
+    name: "",
+    lastname: "",
+    position: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.lastname.trim() || !formData.position.trim()) {
+      return;
+    }
+
+    const newMember = {
+      id: Date.now(),
+      name: formData.name.trim(),
+      lastname: formData.lastname.trim(),
+      position: formData.position.trim(),
+    };
+
+    setMembers((prev) => [...prev, newMember]);
+    setFormData({ name: "", lastname: "", position: "" });
+  };
+
+  const handleDelete = (id) => {
+    setMembers((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  // Determine Title based on current Sector
+  const getSubTitle = () => {
+    if (sector === "user") return "Home - User Section";
+    if (sector === "admin") return "Home - Admin Section";
+    return "React - Assessment";
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center pt-20 pb-16 px-4">
-      {/* Title Section */}
-      <div className="text-center space-y-2 mb-14">
+    <div className="flex flex-col items-center justify-center pt-16 pb-20 px-4 max-w-5xl mx-auto">
+      {/* Header Section */}
+      <div className="text-center space-y-2 mb-12">
         <h1 className="text-4xl font-extrabold text-black tracking-tight">
           Generation Thailand
-
         </h1>
         <h2 className="text-4xl font-extrabold text-black tracking-tight">
-          React - Assessment
+          {getSubTitle()}
         </h2>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-wrap items-center justify-center gap-16">
+      {/* Sector Switcher Buttons */}
+      <div className="flex flex-wrap items-center justify-center gap-14 mb-16">
         <button
           type="button"
-          className="cursor-pointer bg-white text-black font-bold text-sm px-6 py-3.5 rounded shadow-[0_2px_6px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:scale-95 transition-all"
+          onClick={() => setSector("user")}
+          className={`cursor-pointer bg-white text-black font-bold text-sm px-6 py-3.5 rounded shadow-[0_2px_6px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:scale-95 transition-all ${
+            sector === "user" ? "ring-2 ring-black" : ""
+          }`}
         >
           User Home Section
         </button>
 
         <button
           type="button"
-          className="cursor-pointer bg-white text-black font-bold text-sm px-6 py-3.5 rounded shadow-[0_2px_6px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:scale-95 transition-all"
+          onClick={() => setSector("admin")}
+          className={`cursor-pointer bg-white text-black font-bold text-sm px-6 py-3.5 rounded shadow-[0_2px_6px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:scale-95 transition-all ${
+            sector === "admin" ? "ring-2 ring-black" : ""
+          }`}
         >
           Admin Home Section
         </button>
       </div>
+
+      {/* Admin Sector: Create User Form */}
+      {sector === "admin" && (
+        <div className="w-full max-w-4xl mb-12">
+          <h3 className="text-xl font-bold text-black mb-4 text-left">
+            Create User Here
+          </h3>
+          <form onSubmit={handleSave} className="flex flex-wrap sm:flex-nowrap items-center gap-4">
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="flex-1 min-w-[140px] bg-white text-black text-sm px-4 py-2.5 rounded shadow-[0_1px_4px_rgba(0,0,0,0.1)] border border-neutral-200 focus:outline-none placeholder-neutral-400"
+            />
+            <input
+              type="text"
+              name="lastname"
+              placeholder="Last Name"
+              value={formData.lastname}
+              onChange={handleInputChange}
+              className="flex-1 min-w-[140px] bg-white text-black text-sm px-4 py-2.5 rounded shadow-[0_1px_4px_rgba(0,0,0,0.1)] border border-neutral-200 focus:outline-none placeholder-neutral-400"
+            />
+            <input
+              type="text"
+              name="position"
+              placeholder="Position"
+              value={formData.position}
+              onChange={handleInputChange}
+              className="flex-1 min-w-[140px] bg-white text-black text-sm px-4 py-2.5 rounded shadow-[0_1px_4px_rgba(0,0,0,0.1)] border border-neutral-200 focus:outline-none placeholder-neutral-400"
+            />
+            <button
+              type="submit"
+              className="cursor-pointer bg-[#5c67f5] hover:bg-[#4b55e0] text-white font-semibold text-sm px-7 py-2.5 rounded shadow active:scale-95 transition"
+            >
+              Save
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Table Section (User / Admin) */}
+      {(sector === "user" || sector === "admin") && (
+        <Table
+          members={members}
+          isAdmin={sector === "admin"}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 }
