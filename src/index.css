@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    @apply antialiased text-slate-900 bg-slate-50 font-sans;
+    margin: 0;
+    padding: 0;
+  }
+}
